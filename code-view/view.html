@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title><!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="css/http_cdn.jsdelivr.net_npm_bootstrap@3.3.7_dist_css_bootstrap-theme.css"
+          type="text/css">
+    <link rel="stylesheet" href="css/http_cdn.jsdelivr.net_npm_bootstrap@3.3.7_dist_css_bootstrap.css" type="text/css">
+    <script src="js/http_cdn.jsdelivr.net_npm_vue.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.20.0/axios.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<div id="app">
+
+    <div style="width: 100%;background: #42b983;color: white;height: 50px;text-align: center;padding-top: 15px;font-family: 微软雅黑,serif">
+        <span style="">追溯信息</span>
+    </div>
+    <table class="table table-bordered table-striped">
+        <tr style="" v-for="property in properties">
+            <td style="width: 35%">{{property.propertyKey}}</td>
+            <td style="width: 65%">{{property.propertyValue}}</td>
+        </tr>
+    </table>
+</div>
+<script>
+    var app = new Vue({
+        el: '#app',
+
+        created: function () {
+            let urlParams=window.location.search.split("=");
+            let qrcodeId=urlParams[urlParams.length-1];
+            console.log(qrcodeId);
+            axios.defaults.withCredentials = true;
+            axios.get(`https://stu.hrbkyd.com/QRCodeMall/qrcode/${qrcodeId}`).then(res => {
+                this.properties = res.data.data;
+            });
+        },
+
+        data() {
+            return {
+                properties: [],
+                msg: 'xxxx'
+            }
+        }
+    })
+</script>
+</body>
+</html>
