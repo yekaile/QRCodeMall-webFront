@@ -26,6 +26,7 @@
 
 
             addOrderForm() {
+              console.log(JSON.stringify(this.goodsList));
                 generateOrderForm(JSON.stringify(this.goodsList)).then(res => {
                     if (res.data.code === 200) {
                         const goodsList=[...this.goodsList];

@@ -35,9 +35,9 @@
         },
         methods: {
             addOrderForm(){
-                console.log(JSON.stringify(this.goods));
                 generateOrderForm(JSON.stringify(this.goods)).then(res=>{
                     let orderForm = res.data.data;
+                    console.log(JSON.stringify(orderForm));
                     let orderFormId = orderForm.orderFormId;
                     let orderFormNumber = orderForm.orderFormNumber;
                     let orderFormPrice = orderForm.orderFormPrice;
