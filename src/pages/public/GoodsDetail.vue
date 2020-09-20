@@ -88,13 +88,14 @@
             </el-divider>
 
             <div>
-                <h2 style="text-align: center;font-family: 黑体;font-size: 25px">产品售卖</h2>
+                <h2 style="text-align: center;font-family: 黑体;font-size: 25px">产品售卖 </h2>
             </div>
 
-            <el-row type="flex" justify="center" v-for="item in goodsLength" :key="item">
-                <el-col :span="7" v-for="(goods) in goodsList.slice(item,item+3)" :key="goods">
+            <el-row type="flex" justify="center" >
+                <el-col :span="6" v-for="goods in goodsList" :key="goods">
                     <el-card>
                         <h2>
+
                             {{goods.goodsName}}
                         </h2>
                         <el-divider>{{goods.goodsIntroduction}}</el-divider>
@@ -123,27 +124,14 @@
 <script>
 
     import {selectGoods} from "../../api/admin";
-    import {selectGoodsType} from "../../api/goodsType";
+   import {selectGoodsType} from "../../api/goodsType";
     import {insertToShoppingCart} from "../../api/goods"
     export default {
         name: "GoodsDetail",
         created() {
 
 
-            this.goodsTypeName = this.$route.query.goodsTypeName;
-
-            selectGoodsType({
-                goodsTypeName: this.goodsTypeName
-            }).then(res => {
-                this.goodsType = res.data.data;
-            });
-
-            selectGoods({
-                goodsTypeName: this.goodsTypeName
-            }).then(res => {
-                this.goodsList = res.data.data.list;
-                this.goodsLength = this.goodsList.length / 3 + this.goodsList.length % 3;
-            });
+          this.fetchData();
 
         },
         data() {
@@ -157,9 +145,21 @@
             }
         },
         methods: {
-            plusIndex() {
-                this.index++;
-            },
+
+           fetchData(){
+          this.goodsTypeName = this.$route.query.goodsTypeName;
+             selectGoods({
+              goodsTypeName: this.$route.query.goodsTypeName
+            }).then(res => {
+              this.goodsList = res.data.data.list;
+            });
+            selectGoodsType({
+              goodsTypeName: this.goodsTypeName
+            }).then(res => {
+              this.goodsType = res.data.data;
+            });
+
+          },
 
             addOneOrderForm(goodsId){
                 this.$router.push({path:'addOneOrderForm',query:{goodsId:goodsId}})
