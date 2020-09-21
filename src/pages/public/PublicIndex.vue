@@ -172,7 +172,9 @@
             this.getIndexData();
             let orderFormNumber=  this.$route.query.out_trade_no;
             let totalAmount=this.$route.query.total_amount;
-            buyingSuccessfully({
+          console.log(orderFormNumber);
+          console.log(totalAmount);
+          buyingSuccessfully({
                 orderFormNumber:orderFormNumber,
                 totalAmount:totalAmount
             });

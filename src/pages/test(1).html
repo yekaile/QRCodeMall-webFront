@@ -22,6 +22,20 @@
 <script>
 
 
+
+    let arr=[{goodsTypeName:"农药",goodsTypeId:1},{goodsTypeName:"蔬菜",goodsTypeId:2},{goodsTypeName:"水果",goodsTypeId:3}];
+    let arr1=[{goodsTypeName:"农药",userId:1}];
+    let arr2=arr1.map(value => value.goodsTypeName);
+    console.log(JSON.stringify(arr2));
+   arr=arr.filter((item)=>{
+        return arr2.indexOf(item.goodsTypeName)>=0;
+    })
+
+
+ console.log(JSON.stringify(arr));
+   // console.log(JSON.stringify(arr));
+/*
+
     let config = {headers: {'Content-Type': 'application/json;charset=UTF-8'}};
     let domain = "localhost"
     $(function () {
@@ -47,6 +61,7 @@
         })
 
     })
+*/
 
 </script>
 </body>

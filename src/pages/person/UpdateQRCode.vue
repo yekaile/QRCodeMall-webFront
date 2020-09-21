@@ -35,6 +35,7 @@
 <script>
 
     import {getQRcodeInfo} from '../../api/qrcode'
+    import {updateValue} from "@/api/qrcode";
 
     export default {
         name: "UpdateQRCode",
@@ -53,6 +54,23 @@
                 return propertyKey !== '生产日期' && propertyKey !== '注意事项';
             },
 
+
+          submit(){
+            updateValue(JSON.stringify(this.properties)).then(res=>{
+              if(res.data.code===200||res.data.code===201){
+                this.$message({
+                  message:'修改成功',
+                  type:'success'
+                });
+              }else {
+                this.$message({
+                  message:'修改失败',
+                  type:'error'
+                });
+              }
+
+            })
+          },
             reset() {
                 this.properties.forEach(item => {
                     item.propertyValue = '';

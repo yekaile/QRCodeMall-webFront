@@ -32,6 +32,20 @@ export const myQrcode = params => {
         params
     });
 };
+
+export const updateQrcode = data => {
+    return server({
+        method: 'put',
+        url: '/qrcode/updateQRCode',
+        data
+    });
+};export const updateValue = data => {
+    return server({
+        method: 'put',
+        url: '/qrcode/updateValue',
+        data
+    });
+};
 export const deleteQRcode = params => {
     return server({
         method: 'delete',

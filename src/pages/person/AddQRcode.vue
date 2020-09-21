@@ -43,6 +43,7 @@
 
 <script>
     import {getKeys, addProperty, addQrcode} from '../../api/qrcode'
+    import {selectAllGoodsType} from '../../api/goodsType'
     import {myAccount} from '../../api/account'
 
     export default {
@@ -69,12 +70,26 @@
             },
 
             fetchGoodsType() {
+
+                let goodsTypeList1=[];
+                selectAllGoodsType().then(res=>{
+                  goodsTypeList1=res.data.data;
+                });
+
                 myAccount().then(res => {
                     this.goodsTypeList = res.data.data;
-                    if(this.goodsTypeList.length===0){
-                        this.disabled=true;
-                    }
-                })
+                  if(this.goodsTypeList.length===0){
+                    this.disabled=true;
+                  }
+                  let goodsTypes=this.goodsTypeList.map(value => value.goodsTypeName);
+                 goodsTypeList1= goodsTypeList1.filter((item)=>{
+                        return goodsTypes.indexOf(item.goodsTypeName)>=0;
+                    })
+
+                  this.goodsTypeList=goodsTypeList1;
+                });
+
+
             },
 
             fetchPropertyKeys(goodsType) {
@@ -107,7 +122,6 @@
 
 
            async addQRcode() {
-
                 let goodsTypeName = this.value;
                 let goodsTypeId = 1;
                 for (let i = 0; i < this.goodsTypeList.length; i++) {
@@ -130,7 +144,6 @@
 
 
             },
-
 
           async  addProperty() {
                 let flag1 = true;
