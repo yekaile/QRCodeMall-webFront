@@ -172,12 +172,14 @@
             this.getIndexData();
             let orderFormNumber=  this.$route.query.out_trade_no;
             let totalAmount=this.$route.query.total_amount;
-          console.log(orderFormNumber);
-          console.log(totalAmount);
-          buyingSuccessfully({
+            buyingSuccessfully({
                 orderFormNumber:orderFormNumber,
                 totalAmount:totalAmount
-            });
+            }).then(res=>{
+              if(res.data.code===200||res.data.code===201){
+                this.$router.push("/public");
+              }
+          });
 
         },
         data() {

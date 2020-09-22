@@ -16,8 +16,8 @@
                     </template>
                         <el-menu-item index="/person/addQRcode">添加二维码</el-menu-item>
                         <el-menu-item index="/person/qrcode">二维码信息</el-menu-item>
-                        <el-menu-item index="/person/account">二维码邮寄管理</el-menu-item>
-                        <el-menu-item index="/person/qrcodeBatch">二维码账户</el-menu-item>
+                        <el-menu-item index="/person/account">二维码账户</el-menu-item>
+                        <el-menu-item index="/person/qrcodeBatch">二维码邮寄管理</el-menu-item>
 
                 </el-submenu>
               <!--  <el-submenu>

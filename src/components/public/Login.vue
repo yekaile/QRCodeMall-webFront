@@ -65,7 +65,6 @@
 
 
             forgetPassword(){
-                console.log('forget');
               this.$emit('forgetPassword','forgetPassword');
             },
             login(){
@@ -82,6 +81,7 @@
                                         message:'登录成功！',
                                         type:'success'
                                     });
+
                                 }
                                 selectUser({
                                     userName: this.ruleForm.userName
@@ -92,6 +92,7 @@
                                     setTimeout(()=>{
                                         this.$emit('fromLogin',user);
                                     }, 1000);
+                                  this.$router.push('/public');
                                 })
                             }
                             else{

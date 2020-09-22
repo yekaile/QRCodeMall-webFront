@@ -90,6 +90,7 @@
         beforeDestroy() {
 
             localStorage.setItem('qrcodes',JSON.stringify(this.mailQrcodes));
+            console.log(localStorage.getItem('qrcodes'));
         },
         data() {
             return {
@@ -118,7 +119,6 @@
 
             addMail(qrcode) {
 
-                console.log(JSON.stringify(qrcode));
                 let flag=true;
 
 

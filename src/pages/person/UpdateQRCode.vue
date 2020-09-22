@@ -62,6 +62,9 @@
                   message:'修改成功',
                   type:'success'
                 });
+
+                let qrcodeId = this.$route.query.qrcodeId;
+                this.fetchData(qrcodeId);
               }else {
                 this.$message({
                   message:'修改失败',
