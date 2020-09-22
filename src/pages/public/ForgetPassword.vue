@@ -17,7 +17,7 @@
                 <el-button :disabled="isDisabled" @click="sendCode">{{codeValue}}</el-button>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" @click="doRegister" style="width: 400px">修改</el-button>
+                <el-button type="primary" @click="doRegister" style="width: 400px">修改密码</el-button>
             </el-form-item>
 
 
@@ -36,18 +36,20 @@
             let userPhoneIsExist = (rule, value, callback) => {
                 if (value === '') {
                     callback("手机号不能为空");
+                    this.userPhoneFlag=false;
                 } else if (value !== '') {
                     if (!/^1[3456789]\d{9}$/.test(value)) {
+                      this.userPhoneFlag=false;
                         callback(new Error("请输入正确的手机号格式"));
                     } else {
                         selectUser({
                             userPhone: this.ruleForm.userPhone,
                         }).then(res => {
                             if (res.data.data.list.length === 0) {
+                              this.userPhoneFlag=false;
                                 callback('手机号不存在');
-                                this.isDisabled=true;
                             } else {
-                                this.isDisabled=false;
+                                this.userPhoneFlag=true;
                                 callback();
                             }
                         })
@@ -63,20 +65,8 @@
             let checkVerifCode = (rule, value, callback) => {
                 if (value === '') {
                     callback("验证码不能为空");
-                } else if (value !== '') {
-                    checkVerifyCode(JSON.stringify({
-                        verifyCode: this.ruleForm.verifyCode,
-                        userPhone:this.ruleForm.userPhone
-                    })).then(res => {
-                        if (res.data.code === 200) {
-                            callback();
-                            this.isDisabled=true;
-
-                        } else {
-                            callback('验证码错误');
-                            this.isDisabled=false;
-                        }
-                    })
+                }else {
+                  callback();
                 }
             }
 
@@ -84,15 +74,20 @@
             let checkPassword = (rule, value, callback) => {
                 if (value === '') {
                     callback("密码不能为空");
+                    this.userPasswordFlag=false;
                     this.isDisabled=true;
                 } else if (value.length < 8 || value.length > 16) {
                     callback("密码未在8-16位之间");
-                    this.isDisabled=true;
+
 
                 } else {
-                    callback();
+                  this.userPasswordFlag=true;
+                  callback();
 
                 }
+              if(this.userPhoneFlag&&this.userPasswordFlag){
+                this.isDisabled=false;
+              }
             }
 
 
@@ -100,6 +95,9 @@
                 codeValue: '获取验证码',
                 isDisabled: true,
                 wait: 30,
+
+              userPhoneFlag:false,
+              userPasswordFlag:false,
                 ruleForm: {
                     userName: '',
                     userPassword: '',
@@ -153,25 +151,35 @@
             },
             doRegister() {
 
-                console.log(JSON.stringify(this.ruleForm));
                 this.$refs.ruleForm.validate(valid => {
                     if (valid) {
+                        checkVerifyCode(JSON.stringify({
+                          verifyCode: this.ruleForm.verifyCode,
+                          userPhone: this.ruleForm.userPhone
+                        })).then(res=>{
+                          if(res.data.code===200||res.data.code===201){
+                            selectUser({
+                              userPhone:this.ruleForm.userPhone
+                            }).then(res=>{
+                              let user=res.data.data.list[0];
+                              this.ruleForm["userId"]=user.userId;
+                              user.userPassword=this.ruleForm.userPassword;
 
-                        selectUser({
-                            userPhone:this.ruleForm.userPhone
-                        }).then(res=>{
-                            let user=res.data.data.list[0];
-                            this.ruleForm["userId"]=user.userId;
-
-                            updateUser(JSON.stringify(this.ruleForm)).then(res => {
+                              updateUser(JSON.stringify(user)).then(res => {
                                 if (res.data.code === 201) {
-                                    this.$message({
-                                        message: '修改成功',
-                                        type:"success"
-                                    })
+                                  this.$message({
+                                    message: '修改成功',
+                                    type:"success"
+                                  })
                                 }
-                            });
-                        })
+                              });
+                            })
+
+                          }else {
+                            this.$message.error("验证码错误");
+                          }
+                        });
+
 
                     }
                 })
