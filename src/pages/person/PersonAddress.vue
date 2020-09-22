@@ -140,12 +140,8 @@
                               prop="userAddressDetail"></el-input>
                 </el-form-item>
 
-                <el-form-item prop="userAddressDefault">
-                    <el-checkbox v-model="userAddress1.userAddressDefault" prop="userAddressDefault">设置为默认地址
-                    </el-checkbox>
-                </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="updateAddress1()">修改</el-button>
+                    <el-button type="primary" @click="updateAddress1()" style="width: 100%">修改</el-button>
                 </el-form-item>
             </el-form>
         </el-dialog>
@@ -156,7 +152,7 @@
 <script>
 
 
-    import {arrAll} from '../../datas'
+    import {arrAll} from '@/datas'
     import {myAddress, deleteAddress, addAddress, updateAddress, selectAddressById} from '../../api/user';
 
     export default {
@@ -190,6 +186,7 @@
                 addressList: [],
                 dialogFormVisible: false,
                 userAddressId: '',
+                defaultAddress:null,
                 rules: {
                     receiveName: [{required: true, message: '收件人不能为空', trigger: 'change'}],
                     receivePhone: [{validator: userPhoneIsExist, trigger: 'change'}],
@@ -223,7 +220,7 @@
             updateCity() {
                 for (var i in this.arr) {
                     var obj = this.arr[i];
-                    if (obj.name == this.prov) {
+                    if (!(obj.name !== this.prov)) {
                         this.cityArr = obj.sub;
                         break;
                     }
@@ -233,7 +230,7 @@
             updateDistrict() {
                 for (var i in this.cityArr) {
                     var obj = this.cityArr[i];
-                    if (obj.name == this.city) {
+                    if (obj.name === this.city) {
                         this.districtArr = obj.sub;
                         break;
                     }
@@ -249,28 +246,79 @@
                 myAddress().then(res => {
                     this.addressList = res.data.data;
                 });
+              for(let i=0;i<this.addressList.length;i++){
+                let address=this.addressList[i];
+                if(address.userAddressDefault===1){
+                 this.defaultAddress=address;
+                  break;
+                }
+              }
             },
 
             addAddress1() {
-                this.$refs.ruleForm.validate((valid) => {
-                    console.log(JSON.stringify(this.ruleForm));
-                    if (valid===true) {
-                        addAddress(JSON.stringify({
+
+
+                      if(this.ruleForm.userAddressDefault){
+                        let flag=true;
+                        let address1;
+                        for(let i=0;i<this.addressList.length;i++){
+                          let address=this.addressList[i];
+                          if(address.userAddressDefault===1){
+                            address1=address;
+                            flag=false;
+                            break;
+                          }
+                        }
+                        if(!flag){
+                          updateAddress(
+                              JSON.stringify({
+                                userAddressId: address1.userAddressId,
+                                userAddressDefault: 0
+                              })
+                          );
+                          addAddress(JSON.stringify({
                             userAddressProvince: this.prov,
                             userAddressCity: this.city,
                             userAddressDistrict: this.district,
                             userAddressDetail: this.ruleForm.userAddressDetail,
                             receiveName: this.ruleForm.receiveName,
                             receivePhone: this.ruleForm.receivePhone,
-                            userAddressDefault: this.ruleForm.userAddressDefault
-                        })).then(res => {
-                            alert(res.data.message);
+                            userAddressDefault: 1
+                          })).then(res => {
+                            this.$message.success(res.data.message);
                             this.fetchAddress();
+                          });
+
+                        }else {
+                          addAddress(JSON.stringify({
+                            userAddressProvince: this.prov,
+                            userAddressCity: this.city,
+                            userAddressDistrict: this.district,
+                            userAddressDetail: this.ruleForm.userAddressDetail,
+                            receiveName: this.ruleForm.receiveName,
+                            receivePhone: this.ruleForm.receivePhone,
+                            userAddressDefault:1
+                          })).then(res => {
+                            this.$message.success(res.data.message);
+                            this.fetchAddress();
+                          });
+                        }
+                      }else {
+                        addAddress(JSON.stringify({
+                          userAddressProvince: this.prov,
+                          userAddressCity: this.city,
+                          userAddressDistrict: this.district,
+                          userAddressDetail: this.ruleForm.userAddressDetail,
+                          receiveName: this.ruleForm.receiveName,
+                          receivePhone: this.ruleForm.receivePhone,
+                          userAddressDefault: 0
+                        })).then(res => {
+                          this.$message.success(res.data.message);
+                          this.fetchAddress();
                         });
-                    }else {
-                        return false;
-                    }
-                })
+                      }
+
+
             },
 
             updateAddress1() {
@@ -285,28 +333,59 @@
                     userAddressDefault: this.userAddressDefault
                 })).then(res => {
                     if (res.data.code === 200) {
-                        alert("修改成功");
+                      this.$message.success("修改成功");
                         this.dialogFormVisible = false;
                         this.fetchAddress();
                     }
                 });
             },
             setDefault(userAddressId) {
+
+              let flag=true;
+              let userAddress;
+              for(let i=0;i<this.addressList.length;i++){
+                let address=this.addressList[i];
+                if(address.userAddressDefault===1){
+                  userAddress=address;
+                  flag=false;
+                  break;
+                }
+              }
+
+              if(!flag){
                 updateAddress(
                     JSON.stringify({
-                        userAddressId: userAddressId,
-                        userAddressDefault: this.ruleForm.userAddressDefault
+                      userAddressId: userAddress.userAddressId,
+                      userAddressDefault: 0
+                    })
+                );
+                updateAddress(
+                    JSON.stringify({
+                      userAddressId: userAddressId,
+                      userAddressDefault: 1
                     })
                 ).then(() => {
-                    alert("设置成功");
-                    this.fetchAddress();
+                  this.$message.success("设置成功");
+                  this.fetchAddress();
                 })
+              }else {
+                updateAddress(
+                    JSON.stringify({
+                      userAddressId: userAddressId,
+                      userAddressDefault: 1
+                    })
+                ).then(() => {
+                  this.$message.success("设置成功");
+                  this.fetchAddress();
+                })
+              }
+
             },
             deleteAddress(userAddressId) {
                 deleteAddress({
                     userAddressId: userAddressId
                 }).then(() => {
-                    alert("删除成功");
+                  this.$message.success("删除成功");
                     this.fetchAddress();
                 });
             },

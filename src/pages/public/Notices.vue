@@ -25,7 +25,7 @@
 
 <script>
 
-    import {selectNotice} from "../../api/admin";
+    import {selectNotice} from "@/api/admin";
 
     export default {
         name: "Notices",

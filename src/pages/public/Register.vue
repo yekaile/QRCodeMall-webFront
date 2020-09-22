@@ -101,6 +101,7 @@ export default {
             userPhone: this.ruleForm.userPhone,
           }).then(res => {
             if (res.data.data.list.length === 0) {
+              this.isDisabled=false;
               callback();
             } else {
               callback('手机号已存在');
@@ -162,7 +163,7 @@ export default {
 
     return {
       codeValue: '获取验证码',
-      isDisabled: false,
+      isDisabled: true,
       wait: 30,
       ruleForm: {
         userName: '',

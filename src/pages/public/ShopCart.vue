@@ -56,8 +56,13 @@
                 });
             },
             submit(){
+              if(this.multipleSelection.length===0){
+                this.$message.error('未选择商品');
+              }else {
                 localStorage.setItem('goodsList',JSON.stringify(this.multipleSelection));
                 this.$router.push('/public/addOrderForms');
+              }
+
             }
         },
 
